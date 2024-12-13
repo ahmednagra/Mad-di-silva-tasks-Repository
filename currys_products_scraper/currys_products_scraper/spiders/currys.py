@@ -89,7 +89,7 @@ class CurrySpider(Spider):
         # Log the total number of search keywords available
         self.write_logs(f'[START_REQUESTS] Number of search keywords: {len(self.search_keywords)}')
 
-        for keyword in self.search_keywords[:1]: #test
+        for keyword in self.search_keywords:
             print(f'Search Keyword: {keyword}')
             url = f'https://www.currys.co.uk/search?q={quote(keyword)}&search-button=&lang=en_GB'
             yield Request(url, callback=self.parse, meta={'Keyword': keyword, 'handle_httpstatus_all': True})
@@ -184,7 +184,6 @@ class CurrySpider(Spider):
             item['timestamp'] = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
 
             self.scraped_urls.append(url)
-            print(f"Product: {item}") #test
             self.post_to_api(item)
 
         except json.JSONDecodeError as e:
@@ -210,7 +209,7 @@ class CurrySpider(Spider):
         self.write_logs(f'[POST_TO_API] Error occurred: {failure.value}')
 
     def get_search_keywords_from_file(self):
-        return self.get_input_from_txt(glob.glob('input/search_keywords.txt')[0])
+        return self.get_input_from_txt(glob.glob('input/curry_search_keywords.txt')[0])
 
     def get_input_from_txt(self, file_path):
         try:
@@ -278,19 +277,6 @@ class CurrySpider(Spider):
         try:
             # Check if file exists
             file_exists = os.path.exists(output_file)
-
-            # Open the CSV file in append mode
-            # with open(output_file, 'a' if file_exists else 'w', newline='', encoding='utf-8') as csv_file:
-                # # Use the record's keys as field names
-                # fieldnames = record.keys()
-                # writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
-                # Write the header only if the file is new or empty
-                # if not file_exists or csv_file.tell() == 0:
-                #     writer.writeheader()
-                #
-                # # Write the single row (record) to the CSV
-                # writer.writerow(record)
 
             # Open the JSON file in append mode or create it if it doesn't exist
             with open(output_file, 'a' if file_exists else 'w', encoding='utf-8') as json_file:

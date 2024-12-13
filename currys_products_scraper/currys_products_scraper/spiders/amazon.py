@@ -102,7 +102,7 @@ class AmazonSpider(Spider):
         category_urls = self.get_sub_category_urls(response)
         print(f'Category exists: {len(category_urls)}')
 
-        for url in category_urls[:1]: #test
+        for url in category_urls:
             url = urljoin(response.url, url)
             print(f'Sub Category URl:{url}')
             yield Request(url=url, callback=self.parse_products)
@@ -118,7 +118,7 @@ class AmazonSpider(Spider):
         if products_urls:
             self.total_items += len(products_urls)
 
-            for product_url in products_urls[:1]: #test
+            for product_url in products_urls:
                 url = urljoin(response.url, product_url)
 
                 print(f'Product URl:{url}')
@@ -170,8 +170,6 @@ class AmazonSpider(Spider):
             # Convert ISO 8601 format to MySQL-compatible format
             item['timestamp'] = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
 
-            # yield item
-            print(f"Item = {item}") #test
             self.post_to_api(item)
         except Exception as e:
             self.write_logs(f'Error Parsing item :{response.url} and error: {e}')
